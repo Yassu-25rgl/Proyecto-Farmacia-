@@ -33,6 +33,7 @@
                     <th class="text-center align-middle text-uppercase small">Cliente</th>
                     <th class="text-center align-middle text-uppercase small">Vendedor</th>
                     <th class="text-center align-middle text-uppercase small">Total</th>
+                    <th class="text-center align-middle text-uppercase small">Estado</th>
                     <th class="text-center align-middle text-uppercase small">Acciones</th>
                 </tr>
             </thead>
@@ -44,6 +45,7 @@
                         <td class="text-start align-middle">{{ $sale->customer->name }}</td>
                         <td class="text-start align-middle">{{ $sale->user->name }}</td>
                         <td class="text-end align-middle">S/ {{ number_format($sale->total, 2) }}</td>
+                        <td class="text-center align-middle"><span class="badge text-bg-success">Completada</span></td>
                         <td class="text-center align-middle">
                             <div class="dropdown">
                                 <button class="btn btn-light" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,6 +53,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="{{ route('sales.show', $sale) }}">Ver detalle</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('sales.show', $sale) }}" target="_blank" onclick="setTimeout(() => window.print(), 500)">Imprimir comprobante</a></li>
                                     @if (auth()->user()->hasRole('Administrador'))
                                     <li>
                                         <form action="{{ route('sales.destroy', $sale) }}" method="POST"
@@ -67,7 +70,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-3">No hay ventas registradas</td>
+                        <td colspan="7" class="text-center text-muted py-3">No hay ventas registradas</td>
                     </tr>
                 @endforelse
             </tbody>

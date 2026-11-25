@@ -39,7 +39,10 @@
                 </div>
             </div>
 
-            <h6 class="text-uppercase small text-muted mt-2 mb-2">Medicamentos</h6>
+            <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+                <h6 class="text-uppercase small text-muted mb-0">Medicamentos</h6>
+                <input type="search" id="medicine-search" class="form-control form-control-sm w-auto" placeholder="Buscar medicamento">
+            </div>
 
             @if ($errors->has('items') || $errors->has('items.*'))
                 <div class="alert alert-danger py-2">
@@ -99,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const templateEl = document.getElementById('item-template');
     const addBtn = document.getElementById('add-item');
     const totalEl = document.getElementById('total');
+    const searchInput = document.getElementById('medicine-search');
 
     if (!tbody || !templateEl || !addBtn) return;
 
@@ -143,6 +147,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     tbody.addEventListener('change', recalculate);
     tbody.addEventListener('input', recalculate);
+
+    searchInput.addEventListener('input', function () {
+        const term = this.value.toLowerCase();
+        tbody.querySelectorAll('select').forEach(select => {
+            Array.from(select.options).forEach(option => {
+                if (!option.value) return;
+                option.hidden = !option.text.toLowerCase().includes(term);
+            });
+        });
+    });
 
     if (index === 0 && tbody.children.length === 0) {
         addBtn.click();

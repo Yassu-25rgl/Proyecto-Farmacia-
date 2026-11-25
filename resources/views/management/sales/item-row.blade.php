@@ -6,7 +6,7 @@
                 <option value="{{ $medicine->id }}"
                         data-price="{{ $medicine->price_unit }}"
                         @selected((string) ($item['medicines_id'] ?? '') === (string) $medicine->id)>
-                    {{ $medicine->category->name ?? 'Medicamento #' . $medicine->id }} (stock: {{ $medicine->amount }})
+                    {{ $medicine->name ?? 'Medicamento #' . $medicine->id }} (stock: {{ $medicine->amount }})
                 </option>
             @endforeach
         </select>

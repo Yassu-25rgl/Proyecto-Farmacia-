@@ -50,7 +50,7 @@
                 @foreach ($sale->details as $detail)
                     <tr>
                         <td class="text-center">{{ $loop->iteration }}</td>
-                        <td>{{ $detail->medicine->category->name ?? 'Medicamento #' . $detail->medicines_id }}</td>
+                        <td>{{ $detail->medicine->name ?? 'Medicamento #' . $detail->medicines_id }}</td>
                         <td class="text-center">{{ $detail->amount }}</td>
                         <td class="text-end">S/ {{ number_format($detail->price_unit, 2) }}</td>
                         <td class="text-end">S/ {{ number_format($detail->subtotal, 2) }}</td>
@@ -73,7 +73,10 @@
             </tfoot>
         </table>
 
-        <a href="{{ route('sales.index') }}" class="btn btn-secondary">Volver</a>
+        <div class="d-flex gap-2">
+            <a href="{{ route('sales.index') }}" class="btn btn-secondary">Volver</a>
+            <button type="button" class="btn btn-primary text-white" onclick="window.print()"><i class="bi bi-printer me-1"></i>Imprimir comprobante</button>
+        </div>
     </div>
 </div>
 @endsection
