@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('medicines', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained()->restrictOnDelete(); 
-            $table->string('name', 120); 
-            $table->decimal('price', 10, 2); 
-            $table->unsignedInteger('stock')->default(0);
+            $table->foreignId('category_id')->constrained()->restrictOnDelete();
+            $table->unsignedInteger('amount')->default(0);
+            $table->decimal('price_unit', 10, 2);
+            $table->decimal('subtotal', 10, 2)->default(0);
             $table->timestamps();
         });
     }

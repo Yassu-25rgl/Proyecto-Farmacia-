@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -11,12 +9,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
-$table->id();
-        $table->string('name');
-        $table->text('description')->nullable();
-        $table->timestamps();
-        });
+        // La tabla categories ya fue creada por la migración anterior.
     }
 
     /**
@@ -24,6 +17,6 @@ $table->id();
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        // No elimina una tabla creada por otra migración.
     }
 };

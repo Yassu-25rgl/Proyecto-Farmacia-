@@ -1,23 +1,21 @@
 @extends('template.administrador')
 
-@section('title', 'CATEGORIAS')
-@section('name-section', 'CATEGORIAS')
-
-@section('description', 'Actualizar registro de categoría')
-@section('item-breadcrumb', 'Actualizar')
-@section('section-breadcrumb', 'Categorías')
-@section('module-breadcrumb', 'Configuraciones')
-
+@section('title', 'Roles')
+@section('name_section', 'Roles')
+@section('description', 'Editar registro de rol')
+@section('item_section', 'Editar')
+@section('route_section', route('roles.index'))
+@section('section', 'Roles')
+@section('module', 'Configuraciones')
 
 @section('content')
 <div class="card bg-white border-0 shadow-sm border-5 border-top border-secondary">
     <div class="card-body">
-        <form action="{{ route('categories.update', $category->id) }}" method="POST">
+        <form action="{{ route('roles.update', $role) }}" method="POST">
             @csrf
-            @method('put')
-            @include('settings.categories._form')
+            @method('PUT')
+            @include('settings.roles.form')
         </form>
     </div>
 </div>
-
 @endsection

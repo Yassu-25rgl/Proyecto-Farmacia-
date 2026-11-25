@@ -11,12 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 50)->unique();
-            $table->string('description')->nullable();
-            $table->timestamps();
-        });
+        // La tabla roles ya fue creada por la migración anterior.
     }
 
     /**
@@ -24,6 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        // No elimina una tabla creada por otra migración.
     }
 };

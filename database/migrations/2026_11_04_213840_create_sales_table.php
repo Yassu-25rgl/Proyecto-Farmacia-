@@ -11,15 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sales', function (Blueprint $table) {
-$table->id();
-            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('users_id')->constrained()->cascadeOnDelete();
-            $table->datetime('date');
-            $table->decimal('total', 10, 2);
-            $table->decimal('igv', 10, 2);
-            $table->timestamps();
-        });
+        // La tabla sales ya fue creada por la migración anterior.
     }
 
     /**
@@ -27,6 +19,6 @@ $table->id();
      */
     public function down(): void
     {
-        Schema::dropIfExists('sales');
+        // No elimina una tabla creada por otra migración.
     }
 };

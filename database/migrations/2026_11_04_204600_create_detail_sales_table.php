@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -11,15 +9,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detail_sales', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('sale_id')->constrained()->cascadeOnDelete(); 
-            $table->foreignId('medicine_id')->constrained()->restrictOnDelete(); 
-            $table->unsignedInteger('amount'); 
-            $table->decimal('price_unit', 10, 2); 
-            $table->decimal('subtotal', 10, 2);
-            $table->timestamps();
-        });
+        // La tabla de detalles se crea con el nombre details.
     }
 
     /**
@@ -27,6 +17,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detail_sales');
+        // No elimina una tabla creada por otra migración.
     }
 };
