@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="San Juan – Sistema de Venta de Medicamentos">
+  <meta name="theme-color" content="#ff0040">
   <title>FARM SJB | Iniciar sesión</title>
+  <link rel="manifest" href="{{ asset('manifest.json') }}">
+  <link rel="apple-touch-icon" href="{{ asset('icons/icon-192.png') }}">
   <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
   <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 </head>
@@ -117,6 +120,7 @@
 </main>
 
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('js/pwa.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('form[action="{{ route('login') }}"]');
