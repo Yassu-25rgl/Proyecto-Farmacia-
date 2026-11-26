@@ -9,13 +9,11 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 
 /**
- * Genera ventas de los últimos 90 días con entre 1 y 4 medicamentos cada una.
- * Sigue las mismas reglas que SaleController@store: precio de la base de datos,
- * descuento de stock e IGV incluido en el precio (total × 18 / 118).
+ * Genera ventas de demostración recientes y descuenta las unidades vendidas.
  */
 class SaleSeeder extends Seeder
 {
-    private const TOTAL_SALES = 60;
+    private const TOTAL_SALES = 12;
 
     public function run(): void
     {
@@ -23,8 +21,7 @@ class SaleSeeder extends Seeder
         $users = User::all();
 
         for ($i = 0; $i < self::TOTAL_SALES; $i++) {
-            // Solo medicamentos que aún tienen stock
-            $available = Medicine::where('stock', '>', 0)->get();
+            $available = Medicine::where('amount', '>', 0)->get();
 
             if ($available->isEmpty()) {
                 break;
@@ -32,8 +29,8 @@ class SaleSeeder extends Seeder
 
             $sale = Sale::create([
                 'customer_id' => $customers->random()->id,
-                'user_id' => $users->random()->id,
-                'date' => now()->subDays(fake()->numberBetween(0, 90))
+                'users_id' => $users->random()->id,
+                'date' => now()->subDays(fake()->numberBetween(0, 14))
                     ->setTime(fake()->numberBetween(8, 21), fake()->numberBetween(0, 59)),
                 'total' => 0,
                 'igv' => 0,
@@ -41,18 +38,18 @@ class SaleSeeder extends Seeder
 
             $total = 0;
 
-            foreach ($available->random(min(fake()->numberBetween(1, 4), $available->count())) as $medicine) {
-                $amount = min(fake()->numberBetween(1, 5), $medicine->stock);
-                $subtotal = $medicine->price * $amount;
+            foreach ($available->random(min(fake()->numberBetween(1, 3), $available->count())) as $medicine) {
+                $amount = min(fake()->numberBetween(1, 3), $medicine->amount);
+                $subtotal = $medicine->price_unit * $amount;
 
                 $sale->details()->create([
-                    'medicine_id' => $medicine->id,
+                    'medicines_id' => $medicine->id,
                     'amount' => $amount,
-                    'price_unit' => $medicine->price,
+                    'price_unit' => $medicine->price_unit,
                     'subtotal' => $subtotal,
                 ]);
 
-                $medicine->decrement('stock', $amount);
+                $medicine->decrement('amount', $amount);
                 $total += $subtotal;
             }
 

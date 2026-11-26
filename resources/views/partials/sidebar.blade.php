@@ -64,7 +64,6 @@
                 <span class="small fw-medium">Ventas</span>
             </a>
         </li>
-
         @if (auth()->user()->hasRole('Administrador'))
         <!-- SECCIÓN CONFIGURACIONES -->
         <li class="nav-item px-2 pt-3 pb-1">
@@ -97,24 +96,32 @@
         @endif
     </ul>
 
-    <hr class="text-secondary">
+    <div class="sidebar-footer flex-shrink-0">
+        <hr class="text-secondary">
 
-    <!-- PIE DEL SIDEBAR / USUARIO -->
-    <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle px-2 py-1" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-2 text-white fw-bold small" style="width: 30px; height: 30px;">
-                {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 2)) }}
-            </div>
-            <div class="lh-sm">
-                <strong class="d-block small">{{ auth()->user()->name }}</strong>
-                <span class="text-white-50 d-block" style="font-size: 11px;">{{ auth()->user()->email }}</span>
-                <span class="text-white-50" style="font-size: 10px;">{{ auth()->user()->role->name }}</span>
-            </div>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li><a class="dropdown-item" href="#">Perfil</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Cerrar sesión</a></li>
-        </ul>
+        <!-- PIE DEL SIDEBAR / USUARIO -->
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle px-2 py-1" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-2 text-white fw-bold small" style="width: 30px; height: 30px;">
+                    {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 2)) }}
+                </div>
+                <div class="lh-sm">
+                    <strong class="d-block small">{{ auth()->user()->name }}</strong>
+                    <span class="text-white-50 d-block" style="font-size: 11px;">{{ auth()->user()->email }}</span>
+                    <span class="text-white-50" style="font-size: 10px;">{{ auth()->user()->role->name }}</span>
+                </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" href="#">Perfil</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Cerrar sesión</a></li>
+            </ul>
+        </div>
+        <button type="button"
+                class="nav-link sidebar-link text-white-50 rounded-4 px-3 py-2 d-flex align-items-center gap-2 w-100 text-start mt-2"
+                data-bs-toggle="modal" data-bs-target="#logoutModal">
+            <i class="bi bi-box-arrow-right fs-6"></i>
+            <span class="small fw-medium">Cerrar sesión</span>
+        </button>
     </div>
 </aside>

@@ -69,9 +69,9 @@ class MedicineSeeder extends Seeder
                 Medicine::create([
                     'category_id' => $categories[$category],
                     'name' => $name,
-                    'price' => $price,
-                    // Algunos con stock bajo (≤ 10) para probar el filtro del listado
-                    'stock' => in_array($name, self::LOW_STOCK) ? fake()->numberBetween(3, 8) : fake()->numberBetween(80, 300),
+                    'price_unit' => $price,
+                    // Algunos con cantidad baja (≤ 10) para probar el filtro del listado.
+                    'amount' => in_array($name, self::LOW_STOCK) ? fake()->numberBetween(3, 8) : fake()->numberBetween(80, 300),
                 ]);
             }
         }

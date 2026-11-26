@@ -3,55 +3,48 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
-use App\Models\Detail;
-use App\Models\Medicine;
+use App\Models\Category;
 use App\Models\Sale;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
-    // Muestra ventas y totales filtrados por fechas, cliente y vendedor.
+    // Muestra ventas y totales filtrados por fechas, vendedor y categoría.
     public function index(Request $request)
     {
-        $salesQuery = Sale::query()
-            ->with(['customer', 'user', 'details.medicine'])
-            ->when($request->filled('start_date'), fn ($query) => $query->whereDate('date', '>=', $request->start_date))
-            ->when($request->filled('end_date'), fn ($query) => $query->whereDate('date', '<=', $request->end_date))
-            ->when($request->filled('customer_id'), fn ($query) => $query->where('customer_id', $request->customer_id))
-            ->when($request->filled('user_id'), fn ($query) => $query->where('users_id', $request->user_id));
+        $salesQuery = $this->applyFilters(
+            Sale::query()->with(['customer', 'user']),
+            $request
+        );
 
         $sales = (clone $salesQuery)->latest('date')->get();
         $salesCount = $sales->count();
         $incomeTotal = $sales->sum('total');
+        $igvTotal = $sales->sum('igv');
+        $averageTicket = $salesCount > 0 ? $incomeTotal / $salesCount : 0;
 
-        $detailQuery = Detail::query()->whereHas('sale', function ($query) use ($request) {
-            $query
-                ->when($request->filled('start_date'), fn ($q) => $q->whereDate('date', '>=', $request->start_date))
-                ->when($request->filled('end_date'), fn ($q) => $q->whereDate('date', '<=', $request->end_date))
-                ->when($request->filled('customer_id'), fn ($q) => $q->where('customer_id', $request->customer_id))
-                ->when($request->filled('user_id'), fn ($q) => $q->where('users_id', $request->user_id));
-        });
-
-        $productsSold = (clone $detailQuery)->sum('amount');
-        $topMedicines = (clone $detailQuery)
-            ->join('medicines', 'details.medicines_id', '=', 'medicines.id')
-            ->selectRaw('medicines.name, SUM(details.amount) as total_amount, SUM(details.subtotal) as total_income')
-            ->groupBy('medicines.id', 'medicines.name')
-            ->orderByDesc('total_amount')
+        $dailySales = $this->applyFilters(Sale::query(), $request)
+            ->selectRaw('DATE(date) as sale_day, SUM(total) as total_sales')
+            ->groupByRaw('DATE(sales.date)')
+            ->orderBy('sale_day')
             ->get();
-
-        $inventory = Medicine::with('category')->orderBy('amount')->get();
+        $dailySalesLabels = $dailySales->pluck('sale_day')
+            ->map(fn ($day) => Carbon::parse($day)->format('d/m'));
 
         return view('principal.reports.index', [
             'sales' => $sales,
             'salesCount' => $salesCount,
-            'productsSold' => $productsSold,
             'incomeTotal' => $incomeTotal,
-            'topMedicines' => $topMedicines,
-            'inventory' => $inventory,
+            'igvTotal' => $igvTotal,
+            'averageTicket' => $averageTicket,
+            'dailySales' => $dailySales,
+            'dailySalesLabels' => $dailySalesLabels,
             'customers' => Customer::orderBy('name')->get(),
+            'categories' => Category::orderBy('name')->get(),
             'users' => User::orderBy('name')->get(),
         ]);
     }
@@ -59,11 +52,7 @@ class ReportController extends Controller
     // Descarga el listado filtrado como CSV compatible con Excel.
     public function export(Request $request)
     {
-        $sales = Sale::with(['customer', 'user'])
-            ->when($request->filled('start_date'), fn ($query) => $query->whereDate('date', '>=', $request->start_date))
-            ->when($request->filled('end_date'), fn ($query) => $query->whereDate('date', '<=', $request->end_date))
-            ->when($request->filled('customer_id'), fn ($query) => $query->where('customer_id', $request->customer_id))
-            ->when($request->filled('user_id'), fn ($query) => $query->where('users_id', $request->user_id))
+        $sales = $this->applyFilters(Sale::with(['customer', 'user']), $request)
             ->latest('date')
             ->get();
 
@@ -90,5 +79,18 @@ class ReportController extends Controller
             'Content-Type' => 'text/csv; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="reporte-ventas.csv"',
         ]);
+    }
+
+    private function applyFilters(Builder $query, Request $request): Builder
+    {
+        return $query
+            ->when($request->filled('start_date'), fn ($builder) => $builder->whereDate('date', '>=', $request->input('start_date')))
+            ->when($request->filled('end_date'), fn ($builder) => $builder->whereDate('date', '<=', $request->input('end_date')))
+            ->when($request->filled('customer_id'), fn ($builder) => $builder->where('customer_id', $request->input('customer_id')))
+            ->when($request->filled('user_id'), fn ($builder) => $builder->where('users_id', $request->input('user_id')))
+            ->when($request->filled('category_id'), fn ($builder) => $builder->whereHas(
+                'details.medicine',
+                fn ($medicineQuery) => $medicineQuery->where('category_id', $request->input('category_id'))
+            ));
     }
 }

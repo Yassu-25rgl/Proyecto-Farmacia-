@@ -68,7 +68,8 @@ body { background-color: #f4f6f8; }
   width: 260px;
   min-width: 260px;
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: width .25s ease, min-width .25s ease;
 }
 
